@@ -1,40 +1,19 @@
 [org 0x1000]
 
-mov ah,0x00
-mov al,0x03
-int 0x10
-
 mov ah,0x0e
-mov si,logo
+mov si,msg
 
-print_logo:
+print:
 lodsb
 cmp al,0
-je lockscreen
+je halt
 int 0x10
-jmp print_logo
+jmp print
 
-lockscreen:
+halt:
+jmp $
 
-mov si,lockmsg
-
-print_lock:
-lodsb
-cmp al,0
-je wait_key
-int 0x10
-jmp print_lock
-
-wait_key:
-mov ah,0
-int 0x16
-
-mov ah,0x00
-mov al,0x03
-int 0x10
-
-mov si,home
-
+msg db "Wendigo OS Kernel Loaded!",0
 print_home:
 lodsb
 cmp al,0
