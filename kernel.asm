@@ -1,40 +1,37 @@
 [org 0x1000]
 
-; switch to VGA 320x200 graphics
-mov ax, 0x0013
-int 0x10
+mov ah,0x0e
+mov si,logo
 
-; video memory location
-mov ax, 0xA000
-mov es, ax
-xor di, di
-
-mov si, logo_data
-mov cx, 64000
-
-draw:
+print_logo:
 lodsb
-stosb
-loop draw
-
-; wait for key
-mov ah,0
-int 0x16
-
-; return to text mode
-mov ax,0x0003
+cmp al,0
+je next
 int 0x10
+jmp print_logo
+
+next:
 
 mov si,msg
 
-print:
-mov ah,0x0e
+print_msg:
 lodsb
 cmp al,0
 je halt
 int 0x10
-jmp print
+jmp print_msg
 
+halt:
+jmp $
+
+logo db 13,10
+db "      WENDIGO OS",13,10
+db "       ( 0 0 )",13,10
+db "      /  ---  \",13,10
+db "     /  WOLF   \",13,10
+db "      ---------",13,10,13,10,0
+
+msg db "Boot complete. Press restart to continue.",0
 halt:
 jmp $
 
