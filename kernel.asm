@@ -26,7 +26,6 @@ int 0x10
 jmp print_lock
 
 wait_key:
-
 mov ah,0
 int 0x16
 
