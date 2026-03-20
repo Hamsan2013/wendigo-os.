@@ -1,30 +1,41 @@
 [org 0x7c00]
 
-; print boot message
-mov ah, 0x0e
+mov [BOOT_DRIVE], dl
+
 mov si, bootmsg
+call print
 
-print:
-lodsb
-cmp al, 0
-je load_kernel
-int 0x10
-jmp print
-
-load_kernel:
-; load 1 sector (kernel) from disk into memory at 0x1000
+; load kernel from disk
 mov bx, 0x1000
+mov dh, 1
+mov dl, [BOOT_DRIVE]
+
 mov ah, 0x02
-mov al, 1        ; number of sectors
+mov al, dh
 mov ch, 0
-mov cl, 2        ; sector 2 (kernel)
+mov cl, 2
 mov dh, 0
-mov dl, 0x00
 int 0x13
 
 jmp 0x0000:0x1000
 
+; print function
+print:
+mov ah, 0x0e
+
+print_loop:
+lodsb
+cmp al,0
+je print_done
+int 0x10
+jmp print_loop
+
+print_done:
+ret
+
 bootmsg db "Booting Wendigo OS...",0
+
+BOOT_DRIVE db 0
 
 times 510-($-$$) db 0
 dw 0xaa55
