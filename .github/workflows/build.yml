@@ -1,0 +1,34 @@
+name: Build Wendigo OS 2t
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install NASM
+      run: |
+        sudo apt update
+        sudo apt install nasm -y
+
+    - name: Build Bootloader
+      run: nasm boot.asm -f bin -o boot.bin
+
+    - name: Build Kernel
+      run: nasm kernel.asm -f bin -o kernel.bin
+
+    - name: Create OS Image
+      run: cat boot.bin kernel.bin > wendigo.img
+
+    - name: Upload OS Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wendigo-os-image
+        path: wendigo.img
